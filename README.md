@@ -43,6 +43,7 @@ Requires macOS 12 or later. Runs on both Apple Silicon and Intel Macs.
 - **Formulas:** `SUM`, `AVERAGE`, `COUNTIF`, `SUMIF`, `VLOOKUP`, `INDEX`/`MATCH`, `IF`, `IFERROR`, text functions and more. Click cells while typing a formula to insert their references.
 - **Excel formatting is displayed:** fills, fonts, borders, number formats, merged cells and theme colours.
 - **Notes and threaded comments** from Excel files show in hover popups and in a side panel.
+- **Browse Files (⇧⌘O):** your recently opened files, or every spreadsheet Spotlight finds on this Mac, in a list or folder tree with full path, size, last opened, modified and created dates. Filter, sort, and double-click to open.
 - **Settings (⌘,):** appearance (System, Light or Dark), whether files open in a new tab or a new window, default zoom, freezing the first row on open, and automatic updates.
 
 ### Limitations
