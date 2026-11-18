@@ -1,0 +1,40 @@
+name: Build
+
+# Every push and pull request builds the app (the zip is kept as a workflow artifact).
+# Pushing a tag like v0.2.0-beta.1 also publishes a GitHub Release with MiniSheet-macOS.zip attached\n# (tags with a '-' suffix — alpha, beta, rc — are marked as pre-releases),
+# which is what the in-app updater downloads.
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build universal app
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then export VERSION="${GITHUB_REF_NAME#v}"; fi
+          ./macos/build.sh --dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MiniSheet-macOS
+          path: build/MiniSheet-macOS.zip
+
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PRE=""; [[ "$GITHUB_REF_NAME" == *-* ]] && PRE="--prerelease"
+          gh release create "$GITHUB_REF_NAME" build/MiniSheet-macOS.zip $PRE \
+            --title "MiniSheet ${GITHUB_REF_NAME#v}" --notes-file .github/release-notes.md \
+          || gh release upload "$GITHUB_REF_NAME" build/MiniSheet-macOS.zip --clobber
