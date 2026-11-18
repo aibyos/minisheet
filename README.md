@@ -12,7 +12,7 @@ Everything runs on your Mac. Files never leave your computer, and the only netwo
 curl -fsSL https://raw.githubusercontent.com/aibyos/minisheet/main/install.sh | bash
 ```
 
-This downloads the newest release, installs it into Applications and opens it. Installed this way, macOS doesn't show the "unidentified developer" warning. Run the same command again at any time to update.
+This downloads the newest release, installs it into Applications and opens it, with no extra confirmation step. Run the same command again at any time to update.
 
 | Variant | Command |
 |---|---|
@@ -24,10 +24,10 @@ This downloads the newest release, installs it into Applications and opens it. I
 
 1. Go to [**Releases**](https://github.com/aibyos/minisheet/releases), open the newest release, and download **`MiniSheet-macOS.zip`**.
 2. Unzip it and drag **MiniSheet.app** into your **Applications** folder.
-3. **First launch only:** MiniSheet isn't notarized by Apple (that needs a paid developer account), so macOS blocks it the first time:
-   - Open MiniSheet and click **Done** on the warning.
-   - Open **System Settings → Privacy & Security**, scroll down, and click **Open Anyway** next to *"MiniSheet was blocked…"*.
-   - Confirm with your password or Touch ID. You won't be asked again.
+3. **Confirm the first launch.** MiniSheet is distributed directly rather than through the Mac App Store, so macOS asks you to approve it once:
+   - Open MiniSheet, then click **Done** in the dialog that appears.
+   - Go to **System Settings → Privacy & Security** and click **Open Anyway** next to *"MiniSheet was blocked…"*.
+   - Confirm with your password or Touch ID. Later launches and in-app updates open normally.
 
 Requires macOS 12 or later. Runs on both Apple Silicon and Intel Macs.
 
@@ -64,7 +64,7 @@ macos/build.sh            # builds for this Mac and installs to ~/Applications/M
 macos/build.sh --dist     # universal (Apple Silicon + Intel) build, zipped into build/
 ```
 
-An app you build yourself doesn't trigger the Gatekeeper warning on your own Mac.
+An app you build on your own Mac opens without the first-launch confirmation.
 
 ### How it's put together
 

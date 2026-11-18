@@ -1,5 +1,11 @@
-**Download `MiniSheet-macOS.zip` below**, unzip it, and drag **MiniSheet.app** into your Applications folder. Works on macOS 12 or later, Apple Silicon and Intel.
+**Alpha release.** Early software: expect rough edges and keep backups of important files.
 
-**First launch:** MiniSheet isn't notarized by Apple, so macOS blocks it the first time. Open it once, click **Done**, then go to **System Settings → Privacy & Security**, scroll down and click **Open Anyway** next to "MiniSheet was blocked". You only need to do this once; later updates install from inside the app.
+**Install:** run this in Terminal:
 
-Already using MiniSheet? It will offer this update itself (MiniSheet → Check for Updates…).
+```bash
+curl -fsSL https://raw.githubusercontent.com/aibyos/minisheet/main/install.sh | bash
+```
+
+Or download `MiniSheet-macOS.zip` below, unzip it, and move **MiniSheet.app** into Applications. Requires macOS 12 or later, on Apple Silicon or Intel.
+
+**First launch (manual download only):** MiniSheet is distributed directly rather than through the Mac App Store, so macOS asks you to approve it once. Open the app and click **Done**, then go to **System Settings → Privacy & Security** and click **Open Anyway**. Updates after that install from inside the app.
