@@ -237,6 +237,15 @@ final class SheetTab: NSObject, WKNavigationDelegate, WKUIDelegate, WKScriptMess
         case "newTab":
             AppDelegate.shared.newTab(nil); replyHandler(true, nil)
 
+        case "about":
+            AppDelegate.shared.showAbout(nil); replyHandler(true, nil)
+
+        case "settings":
+            AppDelegate.shared.showSettings(nil); replyHandler(true, nil)
+
+        case "browse":
+            AppDelegate.shared.showFileBrowser(nil); replyHandler(true, nil)
+
         case "appearance":
             AppDelegate.shared.setTheme((d["mode"] as? String) ?? "auto", from: self)
             replyHandler(true, nil)
@@ -750,6 +759,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
             DispatchQueue.main.asyncAfter(deadline: .now() + 4) { self.say("WINDOWSHOT \(captureWindow(w.window!, to: path))"); exit(0) }
             return
         }
+        if let i = args.firstIndex(of: "--aboutshot"), args.count > i + 1 {   // development aid: render the About panel
+            NSApp.activate(ignoringOtherApps: true)
+            showAbout(nil)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                let panel = NSApp.windows.first { $0.isVisible && !($0.windowController is MainWindowController) }
+                self.say("ABOUTSHOT \(panel.map { captureWindow($0, to: args[i + 1]) } ?? false)"); exit(0)
+            }
+            return
+        }
         if let i = args.firstIndex(of: "--browsertest"), args.count > i + 4 {   // development aid: <recent|mac> <list|tree> <filter|-> <png>
             FileBrowserWindowController.shared.selfTest(scope: args[i + 1] == "mac" ? 1 : 0, tree: args[i + 2] == "tree",
                                                         filter: args[i + 3] == "-" ? "" : args[i + 3], shot: args[i + 4]) { self.say($0); exit(0) }
@@ -798,6 +816,38 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
         SettingsWindowController.shared.refresh()
     }
     @objc func showSettings(_ s: Any?) { SettingsWindowController.shared.show() }
+
+    // MARK: About / links
+    static let orgURL = URL(string: "https://github.com/aibyos")!
+    static let repoURL = URL(string: "https://github.com/aibyos/minisheet")!
+    static let releasesURL = URL(string: "https://github.com/aibyos/minisheet/releases")!
+    static let issuesURL = URL(string: "https://github.com/aibyos/minisheet/issues/new")!
+
+    @objc func showAbout(_ s: Any?) {
+        let body = NSMutableAttributedString()
+        let para = NSMutableParagraphStyle(); para.alignment = .center; para.paragraphSpacing = 4
+        let base: [NSAttributedString.Key: Any] = [.font: NSFont.systemFont(ofSize: 11), .foregroundColor: NSColor.labelColor, .paragraphStyle: para]
+        func text(_ t: String, _ extra: [NSAttributedString.Key: Any] = [:]) { body.append(NSAttributedString(string: t, attributes: base.merging(extra) { $1 })) }
+        func link(_ t: String, _ u: URL) { text(t, [.link: u]) }
+        text("Made by "); link("aibyos", Self.orgURL); text("\n")
+        text("A small, fast spreadsheet app for CSV and Excel files.\n", [.foregroundColor: NSColor.secondaryLabelColor])
+        link("GitHub", Self.repoURL); text("  ·  "); link("Release notes", Self.releasesURL); text("  ·  "); link("Report an issue", Self.issuesURL); text("\n")
+        text("Excel support by ", [.foregroundColor: NSColor.secondaryLabelColor])
+        link("SheetJS", URL(string: "https://sheetjs.com")!)
+        text(" (Apache-2.0)", [.foregroundColor: NSColor.secondaryLabelColor])
+        NSApp.orderFrontStandardAboutPanel(options: [
+            .applicationName: "MiniSheet",
+            .applicationVersion: appVersion,
+            .version: "",
+            .credits: body,
+            NSApplication.AboutPanelOptionKey(rawValue: "Copyright"): "© 2026 aibyos · MIT License",
+        ])
+        NSApp.activate(ignoringOtherApps: true)
+    }
+    @objc func openRepo(_ s: Any?) { NSWorkspace.shared.open(Self.repoURL) }
+    @objc func openReleases(_ s: Any?) { NSWorkspace.shared.open(Self.releasesURL) }
+    @objc func openIssues(_ s: Any?) { NSWorkspace.shared.open(Self.issuesURL) }
+    @objc func openOrg(_ s: Any?) { NSWorkspace.shared.open(Self.orgURL) }
     @objc func showFileBrowser(_ s: Any?) { FileBrowserWindowController.shared.show() }
     @objc func checkForUpdates(_ s: Any?) { Updater.shared.check(userInitiated: true) }
     func keyWindowController() -> MainWindowController? {
@@ -872,7 +922,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
     func buildMenu() -> NSMenu {
         let main = NSMenu()
         main.addItem(menu("MiniSheet", [
-            item("About MiniSheet", #selector(NSApplication.orderFrontStandardAboutPanel(_:)), ""),
+            item("About MiniSheet", #selector(showAbout(_:)), ""),
             item("Check for Updates…", #selector(checkForUpdates(_:)), ""),
             .separator(),
             item("Settings…", #selector(showSettings(_:)), ","),
@@ -939,6 +989,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
         ])
         main.addItem(windowMenu)
         NSApp.windowsMenu = windowMenu.submenu
+        let help = menu("Help", [
+            item("About MiniSheet", #selector(showAbout(_:)), ""),
+            .separator(),
+            item("MiniSheet on GitHub", #selector(openRepo(_:)), ""),
+            item("Release Notes", #selector(openReleases(_:)), ""),
+            item("Report an Issue…", #selector(openIssues(_:)), ""),
+            .separator(),
+            item("More from aibyos", #selector(openOrg(_:)), ""),
+        ])
+        main.addItem(help)
+        NSApp.helpMenu = help.submenu
         return main
     }
 
@@ -1562,6 +1623,18 @@ final class SettingsWindowController: NSWindowController {
         historyLabel.textColor = .secondaryLabelColor
         historyLabel.font = .systemFont(ofSize: 11)
         let historyRow = NSStackView(views: [browse, clear]); historyRow.spacing = 8
+        let about = NSButton(title: "About MiniSheet", target: AppDelegate.shared, action: #selector(AppDelegate.showAbout(_:)))
+        let gh = NSButton(title: "GitHub", target: AppDelegate.shared, action: #selector(AppDelegate.openRepo(_:)))
+        let issue = NSButton(title: "Report an Issue…", target: AppDelegate.shared, action: #selector(AppDelegate.openIssues(_:)))
+        let aboutRow = NSStackView(views: [about, gh, issue]); aboutRow.spacing = 8
+        let credit = NSTextField(labelWithAttributedString: {
+            let a = NSMutableAttributedString(string: "Made by ", attributes: [.font: NSFont.systemFont(ofSize: 11), .foregroundColor: NSColor.secondaryLabelColor])
+            a.append(NSAttributedString(string: "aibyos", attributes: [.font: NSFont.systemFont(ofSize: 11), .link: AppDelegate.orgURL]))
+            a.append(NSAttributedString(string: " · MIT License · ", attributes: [.font: NSFont.systemFont(ofSize: 11), .foregroundColor: NSColor.secondaryLabelColor]))
+            a.append(NSAttributedString(string: "github.com/aibyos/minisheet", attributes: [.font: NSFont.systemFont(ofSize: 11), .link: AppDelegate.repoURL]))
+            return a
+        }())
+        credit.isSelectable = true; credit.allowsEditingTextAttributes = true
         let grid = NSGridView(views: [
             [label("Appearance:"), appearance],
             [label("Open files in:"), openIn],
@@ -1571,6 +1644,8 @@ final class SettingsWindowController: NSWindowController {
             [NSGridCell.emptyContentView, historyLabel],
             [label("Updates:"), autoUpdate],
             [NSGridCell.emptyContentView, updateRow],
+            [label("About:"), aboutRow],
+            [NSGridCell.emptyContentView, credit],
         ])
         grid.column(at: 0).xPlacement = .trailing
         grid.rowAlignment = .firstBaseline
@@ -1578,6 +1653,7 @@ final class SettingsWindowController: NSWindowController {
         grid.columnSpacing = 10
         grid.row(at: 4).topPadding = 14
         grid.row(at: 6).topPadding = 14
+        grid.row(at: 8).topPadding = 14
         grid.translatesAutoresizingMaskIntoConstraints = false
         let content = NSView()
         content.addSubview(grid)

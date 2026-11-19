@@ -44,7 +44,9 @@ Requires macOS 12 or later. Runs on both Apple Silicon and Intel Macs.
 - **Excel formatting is displayed:** fills, fonts, borders, number formats, merged cells and theme colours.
 - **Notes and threaded comments** from Excel files show in hover popups and in a side panel.
 - **Browse Files (⇧⌘O):** your recently opened files, or every spreadsheet Spotlight finds on this Mac, in a list or folder tree with full path, size, last opened, modified and created dates. Filter, sort, and double-click to open.
-- **Settings (⌘,):** appearance (System, Light or Dark), whether files open in a new tab or a new window, default zoom, freezing the first row on open, and automatic updates.
+- **Settings (⌘, or the gear button at the top right):** appearance (System, Light or Dark), whether files open in a new tab or a new window, default zoom, freezing the first row on open, and automatic updates.
+
+- **About and Help:** the ⓘ button or **Help** menu shows the version, credits and links to this repository, release notes and the issue tracker.
 
 ### Limitations
 
@@ -94,4 +96,4 @@ MiniSheet uses [semantic versions](https://semver.org) with pre-release labels w
 
 ## License
 
-MIT. See [LICENSE](LICENSE). Bundled third-party code is listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+MiniSheet is made by [aibyos](https://github.com/aibyos). MIT. See [LICENSE](LICENSE). Bundled third-party code is listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
