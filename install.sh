@@ -71,7 +71,7 @@ if [ "$MODE" = download ]; then
     VERSION="${TAG#v}"
   fi
   URL="https://github.com/$REPO/releases/download/v$VERSION/MiniSheet-macOS.zip"
-  say "Downloading MiniSheet $VERSION…"
+  say "Downloading MiniSheet ${VERSION}…"
   curl -fL --progress-bar "$URL" -o "$WORK/MiniSheet.zip" || fail "Download failed: $URL"
   ditto -x -k "$WORK/MiniSheet.zip" "$WORK" || fail "Couldn't unpack the download."
   NEW="$WORK/MiniSheet.app"
