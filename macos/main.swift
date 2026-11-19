@@ -957,9 +957,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
             .separator(),
             page("Find…", "find", "f"),
         ]))
+        main.addItem(menu("Format", [
+            page("Bold", "bold", "b"),
+            page("Italic", "italic", "i"),
+            .separator(),
+            page("Text Color…", "textColor"),
+            page("Fill Color…", "fillColor"),
+        ]))
         main.addItem(menu("View", [
             page("Notes & Comments", "panel", "m", [.command, .option]),
-            page("Freeze First Row", "freeze"),
+            menu("Freeze", [
+                page("Freeze First Row / Unfreeze", "freeze"),
+                .separator(),
+                page("Freeze Rows Up to Selection", "freezeRows"),
+                page("Freeze Columns Up to Selection", "freezeCols"),
+                page("Freeze Rows and Columns Up to Selection", "freezeSel"),
+                .separator(),
+                page("Unfreeze All", "unfreeze"),
+            ]),
             .separator(),
             menu("Appearance", [page("System", "theme-auto"), page("Light", "theme-light"), page("Dark", "theme-dark")]),
             .separator(),

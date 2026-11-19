@@ -72,7 +72,27 @@ button{font:inherit;color:inherit}
 .toolbar .sepv{width:1px;height:20px;background:var(--border);margin:0 5px}
 .toolbar b.glyph{font-size:15px;font-weight:700;font-family:Georgia,serif}
 .toolbar i.glyph{font-size:16px;font-family:Georgia,serif}
-.swatch-bar{display:block;width:16px;height:3px;border-radius:1px;margin-top:1px}
+.swatch-bar{display:block;width:16px;height:3px;border-radius:1px;margin-top:1px;box-shadow:0 0 0 .5px var(--border)}
+.toolbar .tcol{display:flex;flex-direction:column;align-items:center;line-height:1}
+.toolbar .tcol b{font:600 14px -apple-system,BlinkMacSystemFont,sans-serif;margin-bottom:1px}
+/* colour picker */
+#cpick{position:fixed;display:none;z-index:101;width:252px;background:var(--menu);color:var(--fg);border-radius:10px;box-shadow:var(--shadow);padding:10px;font-size:12px}
+#cpick .cp-t{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-weight:600}
+#cpick .cp-reset{border:0;background:var(--field);color:var(--fg);border-radius:6px;padding:3px 8px;font-size:12px;cursor:default}
+#cpick .cp-reset:hover{background:var(--hover)}
+#cpick .cp-g{display:grid;grid-template-columns:repeat(10,20px);gap:4px;justify-content:space-between}
+#cpick .cp-g + .cp-g{margin-top:8px}
+#cpick i{display:block;width:20px;height:20px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12);cursor:default;font-style:normal}
+#cpick i:hover{transform:scale(1.18)}
+#cpick i.on{box-shadow:0 0 0 2px var(--menu),0 0 0 3.5px var(--accent)}
+#cpick .cp-s{margin:10px 0 6px;color:var(--muted);font-size:11px;font-weight:600;letter-spacing:.03em;text-transform:uppercase}
+#cpick .cp-c{display:flex;align-items:center;gap:6px}
+#cpick .cp-well{position:relative;width:28px;height:24px;border-radius:6px;overflow:hidden;flex:none;box-shadow:inset 0 0 0 1px var(--border);background:conic-gradient(red,#ff0,lime,cyan,blue,#f0f,red)}
+#cpick .cp-well input{position:absolute;inset:-6px;width:40px;height:36px;opacity:0;cursor:default}
+#cpick .cp-hex{flex:1;min-width:0;height:24px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--fg);font:12px ui-monospace,Menlo,monospace;padding:0 6px}
+#cpick .cp-ok{height:24px;border:0;border-radius:6px;background:var(--accent);color:var(--on-accent);padding:0 10px;font-size:12px;cursor:default}
+#cpick .cp-rec{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+#cpick .cp-rec:empty{display:none}
 
 /* ---------- formula bar ---------- */
 .fbar{display:flex;align-items:center;height:30px;background:var(--bg);border-top:1px solid var(--border)}
@@ -97,7 +117,12 @@ button{font:inherit;color:inherit}
 #grid th.rh{position:sticky;left:0;z-index:3;background:var(--head);color:var(--head-fg);font-size:11px;text-align:center;font-weight:500;padding:0;border-right-color:var(--border);cursor:default}
 #grid th.hs{background:var(--head-sel);color:var(--head-sel-fg);font-weight:600}
 #grid th.hf{background:var(--head-sel-fg);color:var(--on-accent);font-weight:600}
-#grid tr.fz td,#grid tr.fz th{position:sticky;top:24px;z-index:4;border-bottom:3px solid var(--freeze)}
+#grid tr.fz td,#grid tr.fz th{position:sticky;top:var(--t);z-index:4}
+#grid tr.fz th{height:22px;line-height:21px}
+#grid td.fzc{position:sticky;z-index:2}
+#grid tr.fz td.fzc,#grid thead th.fzc{z-index:5}
+#grid th.fzb{box-shadow:inset 0 -2px 0 var(--freeze)}
+#grid th.fzr{box-shadow:inset -2px 0 0 var(--freeze)}
 #grid tr.fz th.rh{z-index:5;left:0}
 #grid tr.sp td{height:auto;padding:0;border:0;background:var(--bg)}
 .rz{position:absolute;right:-1px;top:0;width:7px;height:100%;cursor:col-resize;z-index:2}
@@ -157,7 +182,7 @@ button{font:inherit;color:inherit}
 .badge{font-size:10.5px;font-weight:600;background:var(--cmt);color:#fff;border-radius:8px;padding:0 5px;margin-left:3px;line-height:15px}
 
 #fh{position:absolute;width:8px;height:8px;background:var(--accent);border:1.5px solid var(--bg);border-radius:2px;z-index:2;cursor:crosshair;display:none}
-#editor{position:absolute;display:none;z-index:3;margin:0;padding:0 3px;border:2px solid var(--accent);border-radius:0;
+#editor{position:absolute;display:none;z-index:7;margin:0;padding:0 3px;border:2px solid var(--accent);border-radius:0;
   background:var(--input);color:var(--fg);font:13px -apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;line-height:18px;
   resize:none;overflow:hidden;white-space:pre;outline:none;box-shadow:0 2px 6px rgba(0,0,0,.2)}
 #sink{position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none;resize:none;border:0;padding:0}
@@ -220,13 +245,14 @@ button{font:inherit;color:inherit}
   <span class="sepv"></span>
   <button data-a="bold" title="Bold (⌘B)"><b class="glyph">B</b></button>
   <button data-a="italic" title="Italic (⌘I)"><i class="glyph">I</i></button>
+  <button data-a="tcolor" title="Text color"><span class="tcol"><b>A</b><span class="swatch-bar" id="textbar" style="background:#d93025"></span></span></button>
   <button data-a="fill" title="Fill color"><span style="display:flex;flex-direction:column;align-items:center"><svg viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M12 3s6 6.5 6 10.5a6 6 0 0 1-12 0C6 9.5 12 3 12 3z"/></svg><span class="swatch-bar" id="fillbar" style="background:#fef7e0"></span></span></button>
   <span class="sepv"></span>
   <button data-a="al-left" title="Align left"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 10h10M4 14h16M4 18h10"/></svg></button>
   <button data-a="al-center" title="Align center"><svg viewBox="0 0 24 24"><path d="M4 6h16M7 10h10M4 14h16M7 18h10"/></svg></button>
   <button data-a="al-right" title="Align right"><svg viewBox="0 0 24 24"><path d="M4 6h16M10 10h10M4 14h16M10 18h10"/></svg></button>
   <span class="sepv"></span>
-  <button data-a="freeze" title="Freeze first row"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9.5h16" stroke-width="3"/><path d="M10 9.5V20"/></svg></button>
+  <button data-a="freeze" title="Freeze rows and columns"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9.5h16" stroke-width="3"/><path d="M10 9.5V20"/></svg></button>
   <button data-a="sortasc" title="Sort sheet A→Z by current column"><svg viewBox="0 0 24 24"><path d="M7 4v16M3.5 16.5 7 20l3.5-3.5"/><path d="M14 6h7M14 11h5M14 16h3"/></svg></button>
   <button data-a="find" title="Find (⌘F)"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="m15 15 5 5"/></svg></button>
   <button data-a="comments" title="Notes &amp; comments (⌥⌘M)"><svg viewBox="0 0 24 24"><path d="M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-8l-4 3.5V16H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/></svg><span class="badge" id="cbadge" hidden></span></button>
@@ -254,6 +280,7 @@ button{font:inherit;color:inherit}
 </div>
 <textarea id="sink" aria-hidden="true" tabindex="-1"></textarea>
 <div id="menu"></div>
+<div id="cpick" role="dialog" aria-label="Colour picker"></div>
 <div id="find"><input id="findin" placeholder="Find in sheet" spellcheck="false"><span id="findcount"></span><button id="findprev" title="Previous (⇧Enter)">▲</button><button id="findnext" title="Next (Enter)">▼</button><button id="findclose" title="Close (Esc)">✕</button></div>
 <div id="toast"></div>
 <div id="ctip"></div>
@@ -273,7 +300,11 @@ const wrap = $('#wrap'), table = $('#grid'), colgroup = table.querySelector('col
       fhEl = $('#fh'), menuEl = $('#menu'), tabsEl = $('#tabs'), statEl = $('#stat'), titleEl = $('#title');
 
 /* ---------------- model ---------------- */
-function newSheet(name){ return {name, cells:{}, colW:{}, rows:1000, cols:26, freeze:false}; }
+function newSheet(name){ return {name, cells:{}, colW:{}, rows:1000, cols:26, fr:0, fc:0}; }
+/* frozen panes: sh.fr rows and sh.fc columns stay put while the rest scrolls */
+const FR = (sh = S()) => sh.fr || 0, FC = (sh = S()) => sh.fc || 0;
+function frozenW(sh = S()){ let w = 0; for (let c = 0; c < FC(sh); c++) w += cw(c, sh); return w; }
+function normFreeze(sh){ if ('freeze' in sh){ if (sh.freeze && !sh.fr) sh.fr = 1; delete sh.freeze; } }
 function newBook(){ return {title:'Untitled spreadsheet', sheets:[newSheet('Sheet1')], active:0}; }
 
 let book = newBook();
@@ -282,7 +313,7 @@ let editing = null;                        // {r,c,quick,src:'cell'|'bar',ri}
 let undoStack = [], redoStack = [];
 let clip = null, marq = null;              // internal clipboard, dashed marquee range
 let fileHandle = null, fileName = null, fileType = null, dirty = false;
-let drag = null, fillColor = '#fef7e0';
+let drag = null, fillColor = '#fff2cc', textColor = '#cc0000';
 let findSet = null, findList = [], findIdx = -1, findCur = null;
 
 const S = () => book.sheets[book.active];
@@ -724,7 +755,8 @@ function changed(){
 function cellRect(r, c){
   const sh = S(); let x = RH_W;
   for (let i = 0; i < c; i++) x += cw(i);
-  const y = sh.freeze && r === 0 ? wrap.scrollTop + HEAD_H : HEAD_H + r * ROW_H;
+  if (c < FC(sh)) x += wrap.scrollLeft;
+  const y = r < FR(sh) ? wrap.scrollTop + HEAD_H + r * ROW_H : HEAD_H + r * ROW_H;
   return {x, y, w:cw(c)};
 }
 /* effective formatting = MiniSheet's own cell formatting, else the Excel style (cell → row → column) */
@@ -766,12 +798,17 @@ function cellHtml(sh, r, c, R, multi, span = 1, m = null){
     if (al) st += 'text-align:' + al + ';';
     if (X && X.fs) st += 'font-size:' + X.fs + 'px;';
     if (X && X.ff) st += `font-family:'${X.ff}',-apple-system,sans-serif;`;
-    const fc = X && X.fc;
+    const fc = eff(cell, X, 'fc');
     if (bg) st += 'background-color:' + bg + ';color:' + (fc || '#1f1f1f') + ';';
     else if (fc && !(DARK && lum(fc) < 0.35)) st += 'color:' + fc + ';';
-    if (X && X.bd) st += 'box-shadow:' + borderCss(X.bd) + ';';
   }
   const ce = c + span - 1;
+  if (c < FZ.fc){ cls += ' fzc'; st += 'left:' + FZ.left[c] + 'px;'; }
+  const shadow = [];
+  if (X && X.bd) shadow.push(borderCss(X.bd));
+  if (r === FZ.fr - 1 || m && m.r2 === FZ.fr - 1) shadow.push('inset 0 -2px 0 var(--freeze)');
+  if (ce === FZ.fc - 1) shadow.push('inset -2px 0 0 var(--freeze)');
+  if (shadow.length) st += 'box-shadow:' + shadow.join(',') + ';';
   const inR = r >= R.r1 && r <= R.r2 && ce >= R.c1 && c <= R.c2;
   const isAct = m ? sel.ar >= m.r1 && sel.ar <= m.r2 && sel.ac >= m.c1 && sel.ac <= m.c2 : r === sel.ar && c === sel.ac;
   if (isAct) cls += ' act';
@@ -786,7 +823,7 @@ function cellHtml(sh, r, c, R, multi, span = 1, m = null){
 }
 function rowHtml(sh, r, R, multi, fullRow, frozen, M){
   const inR = r >= R.r1 && r <= R.r2;
-  let h = `<tr${frozen ? ' class="fz"' : ''}><th class="rh${inR ? (fullRow ? ' hf' : ' hs') : ''}" data-r="${r}">${r + 1}</th>`;
+  let h = `<tr${frozen ? ` class="fz" style="--t:${HEAD_H + r * ROW_H}px"` : ''}><th class="rh${inR ? (fullRow ? ' hf' : ' hs') : ''}${r === FZ.fr - 1 ? ' fzb' : ''}" data-r="${r}">${r + 1}</th>`;
   for (let c = 0; c < sh.cols; c++){
     const m = M ? M.get(r + ',' + c) : undefined;
     if (m === 0) continue;                                    // covered by a merged block
@@ -794,8 +831,12 @@ function rowHtml(sh, r, R, multi, fullRow, frozen, M){
   }
   return h + '</tr>';
 }
+let FZ = {fr:0, fc:0, left:[]};
 function render(){
   const sh = S(), R = rng(), multi = R.r1 !== R.r2 || R.c1 !== R.c2;
+  normFreeze(sh);
+  FZ = {fr:FR(sh), fc:Math.min(FC(sh), sh.cols), left:[]};
+  for (let c = 0, x = RH_W; c < FZ.fc; c++){ FZ.left[c] = x; x += cw(c, sh); }
   const fullCol = R.r1 === 0 && R.r2 >= sh.rows - 1, fullRow = R.c1 === 0 && R.c2 >= sh.cols - 1;
   const th = document.documentElement.dataset.theme;
   DARK = th ? th === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
@@ -804,7 +845,7 @@ function render(){
   for (let c = 0; c < sh.cols; c++){ const w = cw(c); cg += `<col style="width:${w}px">`; tw += w; }
   colgroup.innerHTML = cg; table.style.width = tw + 'px';
 
-  const base = sh.freeze ? 1 : 0, st = wrap.scrollTop, vh = wrap.clientHeight || 800;
+  const base = FZ.fr, st = wrap.scrollTop, vh = wrap.clientHeight || 800;
   if (Math.ceil((st + vh - HEAD_H) / ROW_H) + BUF > sh.rows - 40) sh.rows += 1000;
   const first = Math.max(base, Math.floor((st - HEAD_H) / ROW_H) - BUF);
   const last = Math.min(sh.rows - 1, Math.ceil((st + vh - HEAD_H) / ROW_H) + BUF);
@@ -813,17 +854,18 @@ function render(){
     M = new Map();
     const add = (lo, hi) => { for (const m of sh.merges){ if (m.r2 < lo || m.r1 > hi) continue;
       for (let r = Math.max(m.r1, lo); r <= Math.min(m.r2, hi); r++){ M.set(r + ',' + m.c1, m); for (let c = m.c1 + 1; c <= m.c2; c++) M.set(r + ',' + c, 0); } } };
-    if (sh.freeze) add(0, 0);
+    if (FZ.fr) add(0, FZ.fr - 1);
     add(first, last);
   }
 
   let h = '<tr><th class="corner" title="Select all"></th>';
   for (let c = 0; c < sh.cols; c++){
     const on = c >= R.c1 && c <= R.c2;
-    h += `<th data-c="${c}"${on ? ` class="${fullCol ? 'hf' : 'hs'}"` : ''}>${colName(c)}<i class="rz" data-rz="${c}"></i></th>`;
+    const k = (on ? (fullCol ? ' hf' : ' hs') : '') + (c < FZ.fc ? ' fzc' : '') + (c === FZ.fc - 1 ? ' fzr' : '');
+    h += `<th data-c="${c}"${k ? ` class="${k.slice(1)}"` : ''}${c < FZ.fc ? ` style="left:${FZ.left[c]}px"` : ''}>${colName(c)}<i class="rz" data-rz="${c}"></i></th>`;
   }
   h += '</tr>';
-  if (sh.freeze) h += rowHtml(sh, 0, R, multi, fullRow, true, M);
+  for (let r = 0; r < FZ.fr; r++) h += rowHtml(sh, r, R, multi, fullRow, true, M);
   thead.innerHTML = h;
 
   let b = '';
@@ -839,6 +881,7 @@ function render(){
     fhEl.style.display = 'block';
     fhEl.style.left = (p.x + p.w - 5) + 'px';
     fhEl.style.top = (p.y + ROW_H - 5) + 'px';
+    fhEl.style.zIndex = R.r2 < FZ.fr ? 6 : R.c2 < FZ.fc ? 3 : 2;
   }
   if (editing) posEditor();
 }
@@ -853,7 +896,7 @@ function updateBar(){
   tb.querySelector('[data-a=bold]').classList.toggle('on', !!activeFmt('b'));
   tb.querySelector('[data-a=italic]').classList.toggle('on', !!activeFmt('i'));
   for (const a of ['left','center','right']) tb.querySelector(`[data-a=al-${a}]`).classList.toggle('on', al === a);
-  tb.querySelector('[data-a=freeze]').classList.toggle('on', !!S().freeze);
+  tb.querySelector('[data-a=freeze]').classList.toggle('on', !!(FR() || FC()));
   tb.querySelector('[data-a=undo]').disabled = !undoStack.length;
   tb.querySelector('[data-a=redo]').disabled = !redoStack.length;
   updateStatus(); updateSaveState();
@@ -903,6 +946,13 @@ window.msMenu = cmd => {
     case 'selectAll': textFocus ? a.select() : selectAll(); break;
     case 'panel': togglePanel(); break;
     case 'freeze': toggleFreeze(); break;
+    case 'freezeSel': setFreeze(sel.ar + 1, sel.ac + 1); break;
+    case 'freezeRows': setFreeze(sel.ar + 1, FC()); break;
+    case 'freezeCols': setFreeze(FR(), sel.ac + 1); break;
+    case 'unfreeze': setFreeze(0, 0); break;
+    case 'bold': if (!textFocus) toggleFmt('b'); break;
+    case 'italic': if (!textFocus) toggleFmt('i'); break;
+    case 'textColor': case 'fillColor': { const R = cellRect(sel.ar, sel.ac), b = wrap.getBoundingClientRect(); openPicker(cmd === 'textColor' ? 'text' : 'fill', b.left + R.x - wrap.scrollLeft, b.top + R.y - wrap.scrollTop + ROW_H + 4); break; }
     case 'theme-auto': case 'theme-light': case 'theme-dark': setTheme(cmd.slice(6)); break;
   }
 };
@@ -929,13 +979,15 @@ function setSel(ar, ac, er = ar, ec = ac, scroll = true){
   onSelComment();
 }
 function scrollToCell(r, c){
-  const sh = S(), p = cellRect(r, c), topOff = HEAD_H + (sh.freeze ? ROW_H : 0);
-  if (!(sh.freeze && r === 0)){
+  const sh = S(), p = cellRect(r, c), topOff = HEAD_H + FR(sh) * ROW_H, leftOff = RH_W + frozenW(sh);
+  if (r >= FR(sh)){
     if (p.y < wrap.scrollTop + topOff) wrap.scrollTop = p.y - topOff;
     else if (p.y + ROW_H > wrap.scrollTop + wrap.clientHeight) wrap.scrollTop = p.y + ROW_H - wrap.clientHeight;
   }
-  if (p.x < wrap.scrollLeft + RH_W) wrap.scrollLeft = p.x - RH_W;
-  else if (p.x + p.w > wrap.scrollLeft + wrap.clientWidth) wrap.scrollLeft = p.x + p.w - wrap.clientWidth;
+  if (c >= FC(sh)){
+    if (p.x < wrap.scrollLeft + leftOff) wrap.scrollLeft = p.x - leftOff;
+    else if (p.x + p.w > wrap.scrollLeft + wrap.clientWidth) wrap.scrollLeft = p.x + p.w - wrap.clientWidth;
+  }
 }
 function moveBy(dr, dc, extend){
   if (extend){ const r = Math.max(0, sel.er + dr), c = Math.max(0, sel.ec + dc); ensureSize(r, c); setSel(sel.ar, sel.ac, r, c); }
@@ -1037,6 +1089,67 @@ function activeFmt(p){ const sh = S(), cell = sh.cells[key(sel.ar, sel.ac)]; ret
 function toggleFmt(p){ const on = !activeFmt(p); formatSel(cell => { cell[p] = on; }); }
 function setAlign(a){ const cur = activeFmt('al'); formatSel(cell => { cell.al = cur === a ? null : a; }); }
 function setFill(color){ formatSel(cell => { cell.bg = color || null; }); if (color){ fillColor = color; $('#fillbar').style.background = color; } }
+function setTextColor(color){ formatSel(cell => { cell.fc = color || null; }); if (color){ textColor = color; $('#textbar').style.background = color; } }
+
+/* ---------------- colour picker: 80-colour palette + any colour via the system picker or a hex code ---------------- */
+const PALETTE = ('000000 434343 666666 999999 b7b7b7 cccccc d9d9d9 efefef f3f3f3 ffffff ' +
+  '980000 ff0000 ff9900 ffff00 00ff00 00ffff 4a86e8 0000ff 9900ff ff00ff ' +
+  'e6b8af f4cccc fce5cd fff2cc d9ead3 d0e0e3 c9daf8 cfe2f3 d9d2e9 ead1dc ' +
+  'dd7e6b ea9999 f9cb9c ffe599 b6d7a8 a2c4c9 a4c2f4 9fc5e8 b4a7d6 d5a6bd ' +
+  'cc4125 e06666 f6b26b ffd966 93c47d 76a5af 6d9eeb 6fa8dc 8e7cc3 c27ba0 ' +
+  'a61c00 cc0000 e69138 f1c232 6aa84f 45818e 3c78d8 3d85c6 674ea7 a64d79 ' +
+  '85200c 990000 b45f06 bf9000 38761d 134f5c 1155cc 0b5394 351c75 741b47 ' +
+  '5b0f00 660000 783f04 7f6000 274e13 0c343d 1c4587 073763 20124d 4c1130').split(' ').map(h => '#' + h);
+const pickEl = $('#cpick');
+let pickMode = null;
+function recentColors(){ try { return JSON.parse(localStorage.getItem('minisheet.colors') || '[]').filter(c => /^#[0-9a-f]{6}$/.test(c)); } catch (e){ return []; } }
+function rememberColor(c){ if (PALETTE.includes(c)) return; const l = [c, ...recentColors().filter(x => x !== c)].slice(0, 10); try { localStorage.setItem('minisheet.colors', JSON.stringify(l)); } catch (e){} }
+function normHex(v){
+  v = String(v || '').trim().replace(/^#/, '').toLowerCase();
+  if (/^[0-9a-f]{3}$/.test(v)) v = v.replace(/./g, ch => ch + ch);
+  return /^[0-9a-f]{6}$/.test(v) ? '#' + v : null;
+}
+function openPicker(mode, x, y){
+  hideMenu();
+  pickMode = mode;
+  const cur = String(activeFmt(mode === 'text' ? 'fc' : 'bg') || '').toLowerCase();
+  const sw = c => `<i data-c="${c}" title="${c.toUpperCase()}" style="background:${c}"${c === cur ? ' class="on"' : ''}></i>`;
+  pickEl.innerHTML =
+    `<div class="cp-t"><span>${mode === 'text' ? 'Text color' : 'Fill color'}</span><button class="cp-reset" data-reset>${mode === 'text' ? 'Automatic' : 'No fill'}</button></div>` +
+    `<div class="cp-g">${PALETTE.slice(0, 20).map(sw).join('')}</div><div class="cp-g">${PALETTE.slice(20).map(sw).join('')}</div>` +
+    `<div class="cp-s">Custom</div>` +
+    `<div class="cp-c"><label class="cp-well" title="Any colour (system colour picker)"><input type="color" value="${cur && cur[0] === '#' && cur.length === 7 ? cur : (mode === 'text' ? textColor : fillColor)}"></label>` +
+    `<input class="cp-hex" placeholder="#RRGGBB" spellcheck="false" value="${cur && !PALETTE.includes(cur) ? cur.toUpperCase() : ''}"><button class="cp-ok">Apply</button></div>` +
+    `<div class="cp-rec">${recentColors().map(sw).join('')}</div>`;
+  pickEl.style.display = 'block';
+  const w = pickEl.offsetWidth, h = pickEl.offsetHeight;
+  pickEl.style.left = Math.max(4, Math.min(x, innerWidth - w - 6)) + 'px';
+  pickEl.style.top = Math.max(4, Math.min(y, innerHeight - h - 6)) + 'px';
+}
+function hidePicker(){ if (pickEl.style.display !== 'block') return; pickEl.style.display = 'none'; pickMode = null; }
+function applyPicked(c, keepOpen){
+  const mode = pickMode; if (!mode) return;
+  if (c) rememberColor(c);
+  mode === 'text' ? setTextColor(c) : setFill(c);
+  if (!keepOpen){ hidePicker(); focusSink(); }
+}
+pickEl.addEventListener('mousedown', e => { if (!e.target.closest('input')) e.preventDefault(); });
+pickEl.addEventListener('click', e => {
+  const sw = e.target.closest('i[data-c]');
+  if (sw) return applyPicked(sw.dataset.c);
+  if (e.target.closest('[data-reset]')) return applyPicked(null);
+  if (e.target.closest('.cp-ok')){ const c = normHex(pickEl.querySelector('.cp-hex').value); c ? applyPicked(c) : toast('Enter a colour like #1A73E8'); }
+});
+pickEl.addEventListener('input', e => {   // live preview while dragging in the system colour picker
+  if (e.target.type === 'color'){ pickEl.querySelector('.cp-hex').value = e.target.value.toUpperCase(); }
+});
+pickEl.addEventListener('change', e => { if (e.target.type === 'color') applyPicked(e.target.value.toLowerCase()); });
+pickEl.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.classList.contains('cp-hex')){ e.preventDefault(); pickEl.querySelector('.cp-ok').click(); }
+  else if (e.key === 'Escape'){ e.preventDefault(); hidePicker(); focusSink(); }
+  e.stopPropagation();
+});
+document.addEventListener('mousedown', e => { if (pickMode && !pickEl.contains(e.target) && !e.target.closest('[data-a=fill],[data-a=tcolor]')) hidePicker(); }, true);
 
 function fillDown(){
   const R = rng(), sh = S(), list = [];
@@ -1186,7 +1299,7 @@ function sortRange(desc){
   let r1, r2, c1, c2;
   const fullCol = R.r1 === 0 && R.r2 >= sh.rows - 1;
   if (R.r2 > R.r1 && !fullCol){ r1 = R.r1; r2 = R.r2; c1 = R.c1; c2 = R.c2; }
-  else { r1 = sh.freeze ? 1 : 0; r2 = e.r; c1 = 0; c2 = Math.max(e.c, 0); }
+  else { r1 = FR(sh); r2 = e.r; c1 = 0; c2 = Math.max(e.c, 0); }
   if (r2 <= r1) return toast('Nothing to sort');
   const rank = v => v == null || v === '' ? 2 : typeof v === 'number' ? 0 : 1;
   snapOp(() => {
@@ -1219,7 +1332,39 @@ function autofit(c, si = book.active){
   for (let r = 1; r <= e.r; r += step) measure(r);
   if (max === 0) delete sh.colW[c]; else sh.colW[c] = Math.round(Math.min(Math.max(max + 14, 44), 420));
 }
-function toggleFreeze(){ const sh = S(); sh.freeze = !sh.freeze; dirty = true; scheduleSave(); render(); updateBar(); }
+function setFreeze(fr, fc){
+  const sh = S(); normFreeze(sh);
+  fr = Math.max(0, Math.min(fr | 0, sh.rows - 1)); fc = Math.max(0, Math.min(fc | 0, sh.cols - 1));
+  let w = 0; for (let c = 0; c < fc; c++) w += cw(c, sh);
+  if (fr && HEAD_H + fr * ROW_H > wrap.clientHeight - 2 * ROW_H) return toast(`Can't freeze ${fr} rows — they wouldn't fit in the window`);
+  if (fc && RH_W + w > wrap.clientWidth - 60) return toast(`Can't freeze ${fc} columns — they wouldn't fit in the window`);
+  if (fr === FR(sh) && fc === FC(sh)) return;
+  sh.fr = fr; sh.fc = fc; dirty = true; scheduleSave(); render(); updateBar();
+  const p = (n, w) => n + ' ' + w + (n === 1 ? '' : 's');
+  toast(!fr && !fc ? 'Unfrozen' : 'Frozen: ' + [fr && p(fr, 'row'), fc && p(fc, 'column')].filter(Boolean).join(' and '));
+}
+function toggleFreeze(){ FR() || FC() ? setFreeze(0, 0) : setFreeze(1, 0); }
+function freezeItems(){
+  const fr = FR(), fc = FC(), r = sel.ar + 1, c = sel.ac + 1, cn = colName(sel.ac);
+  return [
+    {label:'No rows', checked:!fr, act:() => setFreeze(0, fc)},
+    {label:'1 row', checked:fr === 1, act:() => setFreeze(1, fc)},
+    {label:'2 rows', checked:fr === 2, act:() => setFreeze(2, fc)},
+    {label:`Up to row ${r}`, checked:fr === r && r > 2, act:() => setFreeze(r, fc), disabled:r <= 2},
+    ...(fr > 2 && fr !== r ? [{label:`${fr} rows`, checked:true, act:() => {}}] : []),
+    '-',
+    {label:'No columns', checked:!fc, act:() => setFreeze(fr, 0)},
+    {label:'1 column', checked:fc === 1, act:() => setFreeze(fr, 1)},
+    {label:'2 columns', checked:fc === 2, act:() => setFreeze(fr, 2)},
+    {label:`Up to column ${cn}`, checked:fc === c && c > 2, act:() => setFreeze(fr, c), disabled:c <= 2},
+    ...(fc > 2 && fc !== c ? [{label:`${fc} columns`, checked:true, act:() => {}}] : []),
+    '-',
+    {label:`Freeze up to ${refName(sel.ar, sel.ac)} (rows 1–${r}, columns A–${cn})`, act:() => setFreeze(r, c)},
+    {label:'Unfreeze all', act:() => setFreeze(0, 0), disabled:!fr && !fc},
+  ];
+}
+let menuXY = [0, 0];
+function freezeMenuAt(x, y){ setTimeout(() => showMenu(freezeItems(), x, y), 0); }
 
 /* ---------------- sheets ---------------- */
 function renderTabs(){
@@ -1292,10 +1437,12 @@ function bookFromXLSX(buf, title){
   for (const sn of wb.SheetNames){
     const ws = wb.Sheets[sn], sh = newSheet(sn);
     if (ws['!ref']){
-      const rg = XLSX.utils.decode_range(ws['!ref']);
-      for (let r = rg.s.r; r <= rg.e.r; r++) for (let c = rg.s.c; c <= rg.e.c; c++){
-        const cell = ws[XLSX.utils.encode_cell({r, c})];
-        if (!cell) continue;
+      // visit only the cells that exist: many files declare a range down to row 1,048,576
+      let maxR = 0, maxC = 0;
+      for (const addr in ws){
+        if (addr[0] === '!') continue;
+        const cell = ws[addr], {r, c} = XLSX.utils.decode_cell(addr);
+        if (r > maxR) maxR = r; if (c > maxC) maxC = c;
         let v;
         if (cell.f && formulaSupported(cell.f)) v = '=' + cell.f;
         else if (cell.t === 'n') v = (!cell.z || cell.z === 'General') ? String(cell.v) : (cell.w ?? String(cell.v));
@@ -1308,7 +1455,7 @@ function bookFromXLSX(buf, title){
           (sh.cells[r + ',' + c] ||= {v:''}).bg = '#' + cell.s.fgColor.rgb;
         }
       }
-      sh.rows = Math.max(1000, rg.e.r + 101); sh.cols = Math.max(26, rg.e.c + 4);
+      sh.rows = Math.max(1000, maxR + 101); sh.cols = Math.max(26, maxC + 4);
     }
     (ws['!cols'] || []).forEach((ci, c) => { if (ci && (ci.wpx || ci.wch)) sh.colW[c] = Math.round(Math.min(420, Math.max(30, ci.wpx || ci.wch * 7 + 10))); });
     const F = fmt && fmt.sheets[si];
@@ -1323,6 +1470,7 @@ function bookFromXLSX(buf, title){
       for (const r in F.rs) if (used(F.rs[r])) (sh.rs ||= {})[r] = F.rs[r];
       for (const c in F.cs) if (used(F.cs[c])) (sh.cs ||= {})[c] = F.cs[c];
       if (F.noGrid) sh.noGrid = true;
+      if (F.fr) sh.fr = F.fr; if (F.fc) sh.fc = F.fc;
     }
     if (ws['!merges'] && ws['!merges'].length){
       sh.merges = ws['!merges'].map(m => ({r1:m.s.r, c1:m.s.c, r2:m.e.r, c2:m.e.c})).filter(m => m.r2 > m.r1 || m.c2 > m.c1).slice(0, 5000);
@@ -1331,7 +1479,7 @@ function bookFromXLSX(buf, title){
     b.sheets.push(sh);
     si++;
   }
-  if (fmt) b.styles = fmt.styles;
+  if (fmt){ b.styles = fmt.styles; b.baseFont = fmt.base; }
   if (!b.sheets.length) b.sheets.push(newSheet('Sheet1'));
   return b;
 }
@@ -1431,7 +1579,7 @@ function readExcelFormatting(buf){
   const styles = kids(first(sd, 'cellXfs'), 'xf').map(x => {
     const o = {}, g = a => +(x.getAttribute(a) || 0), f = fonts[g('fontId')] || {};
     if (f.b) o.b = true; if (f.i) o.i = true; if (f.u) o.u = true; if (f.st) o.st = true;
-    if (f.sz && base.sz && Math.abs(f.sz - base.sz) > 0.1) o.fs = Math.round(Math.min(18, Math.max(8, f.sz * 13 / base.sz)));
+    if (f.sz && base.sz && Math.abs(f.sz - base.sz) > 0.1){ o.fs = Math.round(Math.min(18, Math.max(8, f.sz * 13 / base.sz))); o.sz = f.sz; }
     if (f.name && f.name !== base.name && /^[\w .-]+$/.test(f.name)) o.ff = f.name;
     if (f.fc && f.fc !== base.fc && f.fc !== '#000000') o.fc = f.fc;
     const fill = fills[g('fillId')]; if (fill) o.bg = fill;
@@ -1454,6 +1602,11 @@ function readExcelFormatting(buf){
     const out = {cells:[], rs:{}, cs:{}, noGrid:/<(?:\w+:)?sheetView\b[^>]*showGridLines="(?:0|false)"/.test(xml)};
     const sdAt = xml.search(/<(?:\w+:)?sheetData\b/);
     const head = sdAt < 0 ? xml : xml.slice(0, sdAt);
+    const pane = /<(?:\w+:)?pane\b([^>]*)>/.exec(head);
+    if (pane && /\bstate="frozen/.test(pane[1])){
+      const n = a => { const m = new RegExp('\\b' + a + '="(\\d+)').exec(pane[1]); return m ? +m[1] : 0; };
+      out.fr = Math.min(n('ySplit'), 30); out.fc = Math.min(n('xSplit'), 15);
+    }
     for (const m of head.matchAll(/<(?:\w+:)?col\b([^>]*)>/g)){
       const a = m[1], s = /\bstyle="(\d+)"/.exec(a), mn = /\bmin="(\d+)"/.exec(a), mx = /\bmax="(\d+)"/.exec(a);
       if (s && +s[1] && mn && mx) for (let c = +mn[1] - 1; c <= Math.min(+mx[1] - 1, 300); c++) out.cs[c] = +s[1];
@@ -1475,7 +1628,7 @@ function readExcelFormatting(buf){
     }
     return out;
   });
-  return {styles, used, sheets};
+  return {styles, used, sheets, base:{name:base.name || 'Calibri', sz:base.sz || 11}};
 }
 async function loadFile(f, handle){
   try {
@@ -1495,7 +1648,7 @@ async function loadFile(f, handle){
     resetDoc(b, f.name, ext, handle);
     if (autoW) book.sheets.forEach((sh, si) => { const e = extent(si); for (let c = 0; c <= e.c; c++) autofit(c, si); });
     if (commentIndex.length && !panelOpen) togglePanel();
-    if (window.__msPrefs && window.__msPrefs.freezeOnOpen) book.sheets.forEach(s => { s.freeze = true; });   // Mac app setting
+    if (window.__msPrefs && window.__msPrefs.freezeOnOpen) book.sheets.forEach(s => { normFreeze(s); if (!s.fr) s.fr = 1; });   // Mac app setting
     render(); updateBar();
     const n = extent();
     toast(`Opened ${f.name} — ${n.r + 1} rows × ${n.c + 1} columns`);
@@ -1546,16 +1699,119 @@ function toXLSX(fmt = "xlsx"){
     }
     ws['!ref'] = XLSX.utils.encode_range({s:{r:0, c:0}, e:{r:mr, c:mc}});
     ws['!cols'] = Array.from({length:mc + 1}, (_, c) => ({wpx:cw(c, sh)}));
+    if (sh.merges && sh.merges.length) ws['!merges'] = sh.merges.map(m => ({s:{r:m.r1, c:m.c1}, e:{r:m.r2, c:m.c2}}));
     let name = (sh.name.replace(/[\[\]:*?\/\\]/g, ' ').slice(0, 31).trim()) || 'Sheet' + (si + 1);
     while (used.has(name.toLowerCase())) name = name.slice(0, 28) + ' ' + (si + 1);
     used.add(name.toLowerCase());
     XLSX.utils.book_append_sheet(wb, ws, name);
   });
+  let out;
   if (fmt === 'xlsm'){
     if (book.vba) wb.vbaraw = Uint8Array.from(atob(book.vba), ch => ch.charCodeAt(0));
-    return new Blob([XLSX.write(wb, {bookType:'xlsm', type:'array', bookVBA:true})], {type:'application/vnd.ms-excel.sheet.macroEnabled.12'});
+    out = XLSX.write(wb, {bookType:'xlsm', type:'array', bookVBA:true});
+  } else out = XLSX.write(wb, {bookType:'xlsx', type:'array'});
+  try { out = addXlsxFormatting(out); } catch (e){ console.warn('Formatting not written:', e); }
+  return new Blob([out], {type:fmt === 'xlsm' ? 'application/vnd.ms-excel.sheet.macroEnabled.12' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+}
+/* SheetJS (community) writes values only. This adds MiniSheet's effective formatting — fonts, colours, fills,
+   borders, alignment, number formats — plus frozen panes and hidden gridlines, by rewriting styles.xml and
+   tagging each cell with its style. */
+function addXlsxFormatting(buf){
+  const xe = s => String(s).replace(/[&<>"]/g, ch => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;'}[ch]));
+  const argb = c => 'FF' + c.replace('#', '').toUpperCase();
+  const bf = book.baseFont || {name:'Calibri', sz:11};
+  const fonts = [''], fills = ['', ''], borders = [''], numFmts = [], xfs = [''];
+  const idx = (list, key) => { let i = list.indexOf(key); if (i < 0){ i = list.length; list.push(key); } return i; };
+  const styleIdx = new Map();
+  const styleFor = (sh, r, c, cell) => {
+    const X = xsOf(sh, r, c, cell), o = {};
+    for (const p of ['b', 'i', 'al', 'bg', 'fc']){ const v = eff(cell, X, p); if (v) o[p] = v; }
+    if (X){ if (X.u) o.u = 1; if (X.st) o.st = 1; if (X.sz) o.sz = X.sz; if (X.ff) o.ff = X.ff; if (X.bd) o.bd = X.bd; if (X.nf) o.nf = X.nf; }
+    if (!Object.keys(o).length) return 0;
+    const font = (o.b ? '<b/>' : '') + (o.i ? '<i/>' : '') + (o.st ? '<strike/>' : '') + (o.u ? '<u/>' : '') +
+      `<sz val="${o.sz || bf.sz}"/>` + (o.fc ? `<color rgb="${argb(o.fc)}"/>` : '<color theme="1"/>') + `<name val="${xe(o.ff || bf.name)}"/>`;
+    const fontId = font === `<sz val="${bf.sz}"/><color theme="1"/><name val="${xe(bf.name)}"/>` ? 0 : idx(fonts, font);
+    const fillId = o.bg ? idx(fills, `<patternFill patternType="solid"><fgColor rgb="${argb(o.bg)}"/><bgColor indexed="64"/></patternFill>`) : 0;
+    let borderId = 0;
+    if (o.bd){
+      const side = (n, k) => { const v = o.bd[k]; return v ? `<${n} style="${v[0] >= 3 ? 'thick' : v[0] === 2 ? 'medium' : 'thin'}"><color rgb="${argb(v[1])}"/></${n}>` : `<${n}/>`; };
+      borderId = idx(borders, side('left', 'l') + side('right', 'r') + side('top', 't') + side('bottom', 'b') + '<diagonal/>');
+    }
+    const numId = o.nf ? 164 + idx(numFmts, o.nf) : 0;
+    const xf = `<xf numFmtId="${numId}" fontId="${fontId}" fillId="${fillId}" borderId="${borderId}" xfId="0"` +
+      (numId ? ' applyNumberFormat="1"' : '') + (fontId ? ' applyFont="1"' : '') + (fillId ? ' applyFill="1"' : '') + (borderId ? ' applyBorder="1"' : '') +
+      (o.al ? ` applyAlignment="1"><alignment horizontal="${o.al}"/></xf>` : '/>');
+    let i = styleIdx.get(xf); if (i == null){ i = xfs.length; xfs.push(xf); styleIdx.set(xf, i); }
+    return i;
+  };
+
+  const z = XLSX.CFB.read(new Uint8Array(buf), {type:'array'});
+  const file = path => { const i = z.FullPaths.findIndex(p => p.endsWith('/' + path)); return i < 0 ? null : z.FileIndex[i]; };
+  const read = f => new TextDecoder().decode(f.content instanceof Uint8Array ? f.content : new Uint8Array(f.content));
+  const write = (f, txt) => { f.content = new TextEncoder().encode(txt); f.size = f.content.length; };
+  let touched = false;
+  book.sheets.forEach((sh, si) => {
+    normFreeze(sh);
+    const f = file(`xl/worksheets/sheet${si + 1}.xml`); if (!f) return;
+    let xml = read(f);
+    // style index per cell (cells that only carry formatting are added as empty styled cells)
+    const st = new Map();
+    for (const k in sh.cells){
+      const s = styleFor(sh, +k.slice(0, k.indexOf(',')), +k.slice(k.indexOf(',') + 1), sh.cells[k]);
+      if (s) st.set(k, s);
+    }
+    if (st.size){
+      const rows = new Map();
+      const sdA = xml.indexOf('<sheetData'), sdB = xml.indexOf('</sheetData>');
+      if (sdA >= 0){
+        const inner = sdB > 0 ? xml.slice(xml.indexOf('>', sdA) + 1, sdB) : '';
+        for (const m of inner.matchAll(/<row\b([^>]*?)(?:\/>|>([\s\S]*?)<\/row>)/g)){
+          const r = +/\br="(\d+)"/.exec(m[1])[1] - 1, cells = new Map();
+          for (const c of (m[2] || '').matchAll(/<c\b[^>]*?\br="([A-Z]+)\d+"[^>]*?(?:\/>|>[\s\S]*?<\/c>)/g)) cells.set(colIndex(c[1]), c[0]);
+          rows.set(r, {attrs:m[1].replace(/\s*\bspans="[^"]*"/, ''), cells});
+        }
+        for (const [k, s] of st){
+          const i = k.indexOf(','), r = +k.slice(0, i), c = +k.slice(i + 1);
+          let row = rows.get(r); if (!row){ row = {attrs:` r="${r + 1}"`, cells:new Map()}; rows.set(r, row); }
+          const ref = colName(c) + (r + 1), cur = row.cells.get(c);
+          row.cells.set(c, cur ? cur.replace(/^(<c\b[^>]*?)\s+s="\d+"/, '$1').replace(/^<c\b/, `<c s="${s}"`) : `<c r="${ref}" s="${s}"/>`);
+        }
+        const body = [...rows.keys()].sort((a, b) => a - b).map(r => {
+          const row = rows.get(r);
+          return `<row${row.attrs}>${[...row.cells.keys()].sort((a, b) => a - b).map(c => row.cells.get(c)).join('')}</row>`;
+        }).join('');
+        xml = xml.slice(0, sdA) + `<sheetData>${body}</sheetData>` + (sdB > 0 ? xml.slice(sdB + 12) : xml.slice(xml.indexOf('>', sdA) + 1));
+        // keep the dimension in step with any styled cells beyond the data
+        let mr = 0, mc = 0; for (const r of rows.keys()){ mr = Math.max(mr, r); for (const c of rows.get(r).cells.keys()) mc = Math.max(mc, c); }
+        xml = xml.replace(/<dimension ref="[^"]*"\/>/, `<dimension ref="A1:${colName(mc)}${mr + 1}"/>`);
+      }
+    }
+    // frozen panes + gridlines
+    const fr = FR(sh), fc = FC(sh);
+    let view = `<sheetView${sh.noGrid ? ' showGridLines="0"' : ''}${si === book.active ? ' tabSelected="1"' : ''} workbookViewId="0"`;
+    if (fr || fc){
+      const pane = fr && fc ? 'bottomRight' : fr ? 'bottomLeft' : 'topRight';
+      view += `><pane${fc ? ` xSplit="${fc}"` : ''}${fr ? ` ySplit="${fr}"` : ''} topLeftCell="${colName(fc)}${fr + 1}" activePane="${pane}" state="frozen"/><selection pane="${pane}"/></sheetView>`;
+    } else view += '/>';
+    if (/<sheetViews>[\s\S]*?<\/sheetViews>/.test(xml)) xml = xml.replace(/<sheetViews>[\s\S]*?<\/sheetViews>/, `<sheetViews>${view}</sheetViews>`);
+    else xml = xml.replace(/(<dimension\b[^>]*\/>)/, `$1<sheetViews>${view}</sheetViews>`);
+    write(f, xml); touched = true;
+  });
+  const sf = file('xl/styles.xml');
+  if (sf && xfs.length > 1){
+    const list = (tag, items, wrapEl) => `<${tag} count="${items.length}">${items.map(wrapEl).join('')}</${tag}>`;
+    const xmlS = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' +
+      (numFmts.length ? list('numFmts', numFmts, (c, i) => `<numFmt numFmtId="${164 + i}" formatCode="${xe(c)}"/>`) : '') +
+      list('fonts', fonts, (f, i) => `<font>${i ? f : `<sz val="${bf.sz}"/><color theme="1"/><name val="${xe(bf.name)}"/><family val="2"/>`}</font>`) +
+      list('fills', fills, (f, i) => `<fill>${i === 0 ? '<patternFill patternType="none"/>' : i === 1 ? '<patternFill patternType="gray125"/>' : f}</fill>`) +
+      list('borders', borders, b => `<border>${b || '<left/><right/><top/><bottom/><diagonal/>'}</border>`) +
+      '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>' +
+      list('cellXfs', xfs, x => x || '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>') +
+      '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles><dxfs count="0"/>' +
+      '<tableStyles count="0" defaultTableStyle="TableStyleMedium9" defaultPivotStyle="PivotStyleMedium4"/></styleSheet>';
+    write(sf, xmlS); touched = true;
   }
-  return new Blob([XLSX.write(wb, {bookType:'xlsx', type:'array'})], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  return touched ? XLSX.CFB.write(z, {fileType:'zip', type:'array', compression:true}) : buf;
 }
 function serialize(fmt){ return fmt === 'xlsx' || fmt === 'xlsm' ? toXLSX(fmt) : toDSV(fmt === 'tsv' ? '\t' : ','); }
 const PICK = {
@@ -1565,13 +1821,7 @@ const PICK = {
   xlsm:{description:"Excel macro-enabled workbook", accept:{"application/vnd.ms-excel.sheet.macroEnabled.12":[".xlsm"]}},
 };
 function savedMsg(fmt){ return fmt !== "xlsx" && fmt !== "xlsm" && book.sheets.length > 1 ? ' (CSV keeps only the current sheet)' : ''; }
-function confirmFormatLoss(fmt){
-  if (!book.styles || book.fmtOk || (fmt !== 'xlsx' && fmt !== 'xlsm')) return true;
-  const ok = confirm('This workbook has Excel formatting (colours, fonts, borders, merged cells, number formats).\n\n' +
-    'MiniSheet can show that formatting but cannot save it yet — saving writes your data, formulas, comments and macros, but without the formatting.\n\nSave anyway?');
-  if (ok) book.fmtOk = true;
-  return ok;
-}
+function confirmFormatLoss(){ return true; }   // formatting, colours and frozen panes are saved to .xlsx/.xlsm
 async function save(){
   if (editing) commitEdit(0, 0, true);
   if (NATIVE && fileHandle && fileHandle.nativePath && ["csv","tsv","xlsx","xlsm"].includes(fileType)){
@@ -1673,9 +1923,8 @@ function gotoFind(i){
 
 /* ---------------- menus ---------------- */
 let menuItems = [], menuFrom = null;
-const COLORS = [['#fce8e6','Red'],['#fef7e0','Yellow'],['#e6f4ea','Green'],['#e8f0fe','Blue'],['#f3e8fd','Purple'],['#fde7f3','Pink'],['#e8eaed','Gray']];
 function showMenu(items, x, y, from){
-  menuItems = items; menuFrom = from || null;
+  menuItems = items; menuFrom = from || null; menuXY = [x, y];
   menuEl.innerHTML = items.map((it, i) => it === '-' ? '<div class="sep"></div>' :
     `<div class="mi${it.disabled ? ' dis' : ''}" data-i="${i}"><span class="ck">${it.checked ? '✓' : ''}</span>${it.icon || ''}<span class="lb">${it.label}</span><span class="kb">${it.kbd || ''}</span></div>`).join('');
   menuEl.style.display = 'block';
@@ -1684,7 +1933,6 @@ function showMenu(items, x, y, from){
   menuEl.style.top = Math.max(4, Math.min(y, innerHeight - h - 6)) + 'px';
 }
 function hideMenu(){ menuEl.style.display = 'none'; menuFrom = null; document.querySelectorAll('.menubar button.open').forEach(b => b.classList.remove('open')); }
-function fillItems(){ return [...COLORS.map(([c, n]) => ({label:n, icon:`<span class="sw" style="background:${c}"></span>`, act:() => setFill(c)})), '-', {label:'No fill', act:() => setFill(null)}]; }
 function cellMenu(){
   const R = rng(), sh = S(), nr = R.r2 - R.r1 + 1, nc = R.c2 - R.c1 + 1;
   const fullCol = R.r1 === 0 && R.r2 >= sh.rows - 1, fullRow = R.c1 === 0 && R.c2 >= sh.cols - 1;
@@ -1709,6 +1957,11 @@ function cellMenu(){
     {label:`Sort ${R.r2 > R.r1 && !fullCol ? 'range' : 'sheet'} by column ${colName(sel.ac)}, Z → A`, act:() => sortRange(true)},
     ...(S().cells[key(sel.ar, sel.ac)] || {}).c ? ['-', {label:`Show ${S().cells[key(sel.ar, sel.ac)].c[0].T ? 'comment thread' : 'note'} in panel`, act:() => { if (!panelOpen) togglePanel(); }}] : [],
     {label:'Resize column to fit', act:() => { for (let c = R.c1; c <= Math.min(R.c2, extent().c); c++) autofit(c); render(); scheduleSave(); }},
+    '-',
+    {label:'Text color…', act:() => { const [x, y] = menuXY; openPicker('text', x, y); }},
+    {label:'Fill color…', act:() => { const [x, y] = menuXY; openPicker('fill', x, y); }},
+    {label:`Freeze up to ${refName(sel.ar, sel.ac)}`, act:() => setFreeze(sel.ar + 1, sel.ac + 1)},
+    ...(FR() || FC() ? [{label:'Unfreeze all', act:() => setFreeze(0, 0)}] : []),
   ];
 }
 function barMenu(name){
@@ -1743,7 +1996,8 @@ function barMenu(name){
     ];
     case 'view': return [
       {label:'Notes & comments panel', kbd:'⌥⌘M', checked:panelOpen, act:togglePanel},
-      {label:'Freeze first row', checked:!!sh.freeze, act:toggleFreeze},
+      {label:'Freeze rows & columns…', checked:!!(FR() || FC()), act:() => freezeMenuAt(...menuXY)},
+      {label:'Unfreeze all', act:() => setFreeze(0, 0), disabled:!FR() && !FC()},
       '-',
       {label:'Theme: match macOS', checked:theme === 'auto', act:() => setTheme('auto')},
       {label:'Theme: light', checked:theme === 'light', act:() => setTheme('light')},
@@ -1765,7 +2019,8 @@ function barMenu(name){
       {label:'Align center', act:() => setAlign('center')},
       {label:'Align right', act:() => setAlign('right')},
       '-',
-      ...fillItems().slice(0, 7).map(it => ({...it, label:'Fill: ' + it.label})),
+      {label:'Text color…', icon:`<span class="sw" style="background:${textColor}"></span>`, act:() => openPicker('text', ...menuXY)},
+      {label:'Fill color…', icon:`<span class="sw" style="background:${fillColor}"></span>`, act:() => openPicker('fill', ...menuXY)},
       '-',
       {label:'Clear formatting', act:clearFormat},
     ];
@@ -1774,7 +2029,7 @@ function barMenu(name){
       {label:`Sort sheet by column ${colName(sel.ac)}, Z → A`, act:() => sortRange(true)},
       '-',
       {label:'Resize all columns to fit', act:() => { const e = extent(); for (let c = 0; c <= e.c; c++) autofit(c); render(); scheduleSave(); }},
-      {label:'Freeze first row', checked:!!sh.freeze, act:toggleFreeze},
+      {label:'Freeze rows & columns…', checked:!!(FR() || FC()), act:() => freezeMenuAt(...menuXY)},
     ];
   }
   return [];
@@ -1801,6 +2056,7 @@ const ARROWS = {ArrowUp:[-1, 0], ArrowDown:[1, 0], ArrowLeft:[0, -1], ArrowRight
 function gridKey(e){
   const meta = e.metaKey || e.ctrlKey, k = e.key;
   if (menuEl.style.display === 'block' && k === 'Escape'){ hideMenu(); e.preventDefault(); return; }
+  if (pickMode && k === 'Escape'){ hidePicker(); e.preventDefault(); return; }
   if (meta){
     if (ARROWS[k]){ jump(...ARROWS[k], e.shiftKey); e.preventDefault(); return; }
     switch (k.toLowerCase()){
@@ -1993,7 +2249,7 @@ wrap.addEventListener('contextmenu', e => {
   if (!cellAt(e.target) && !e.target.closest('th')) return;
   showMenu(cellMenu(), e.clientX, e.clientY);
 });
-wrap.addEventListener('scroll', () => { hideMenu(); reqRender(); }, {passive:true});
+wrap.addEventListener('scroll', () => { hideMenu(); hidePicker(); reqRender(); }, {passive:true});
 window.addEventListener('resize', reqRender);
 
 /* menus & toolbar */
@@ -2024,10 +2280,12 @@ $('#toolbar').addEventListener('click', e => {
     undo, redo, open:openFile, save,
     bold:() => toggleFmt('b'), italic:() => toggleFmt('i'),
     'al-left':() => setAlign('left'), 'al-center':() => setAlign('center'), 'al-right':() => setAlign('right'),
-    freeze:toggleFreeze, sortasc:() => sortRange(false), find:openFind, comments:togglePanel,
-    fill:() => { const r = b.getBoundingClientRect(); showMenu(fillItems(), r.left, r.bottom + 4); },
+    freeze:() => { const r = b.getBoundingClientRect(); showMenu(freezeItems(), r.left, r.bottom + 4); },
+    sortasc:() => sortRange(false), find:openFind, comments:togglePanel,
+    fill:() => { if (pickMode === 'fill') return hidePicker(); const r = b.getBoundingClientRect(); openPicker('fill', r.left, r.bottom + 4); },
+    tcolor:() => { if (pickMode === 'text') return hidePicker(); const r = b.getBoundingClientRect(); openPicker('text', r.left, r.bottom + 4); },
   }[a] || (() => {}))();
-  if (a !== 'find' && a !== 'fill' && !editing) focusSink();
+  if (a !== 'find' && !editing) focusSink();
 });
 
 /* sheet tabs */

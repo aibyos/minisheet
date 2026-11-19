@@ -39,9 +39,11 @@ Requires macOS 12 or later. Runs on both Apple Silicon and Intel Macs.
 
 - **Files:** opens `.csv`, `.tsv`, `.xlsx`, `.xlsm` and `.xls`, and saves back to the same file with ⌘S. Macros in `.xlsm` files are kept.
 - **Tabs:** each file gets a compact tab. Drag tabs to reorder them, and hover over a shortened tab to see the full file name.
-- **Spreadsheet basics:** keyboard navigation, in-cell editing, copy and paste to and from Excel or Sheets, the fill handle, undo and redo, sorting, find, freezing the first row, multiple sheets, and a sum, average and count of the selected cells in the status bar.
+- **Spreadsheet basics:** keyboard navigation, in-cell editing, copy and paste to and from Excel or Sheets, the fill handle, undo and redo, sorting, find, multiple sheets, and a sum, average and count of the selected cells in the status bar.
+- **Freeze panes:** freeze any number of rows and columns. Use 1 or 2, "up to" the selected row, column or cell, from the toolbar, the View menu or a right-click. Frozen panes are read from and saved to Excel files.
+- **Text and fill colours:** an 80-colour palette, plus any colour through the macOS colour picker or a hex code. Your custom colours are remembered.
 - **Formulas:** `SUM`, `AVERAGE`, `COUNTIF`, `SUMIF`, `VLOOKUP`, `INDEX`/`MATCH`, `IF`, `IFERROR`, text functions and more. Click cells while typing a formula to insert their references.
-- **Excel formatting is displayed:** fills, fonts, borders, number formats, merged cells and theme colours.
+- **Excel formatting is displayed and saved:** fills, font colours, bold, italic, underline, fonts and sizes, borders, alignment, number formats, merged cells and theme colours.
 - **Notes and threaded comments** from Excel files show in hover popups and in a side panel.
 - **Browse Files (⇧⌘O):** your recently opened files, or every spreadsheet Spotlight finds on this Mac, in a list or folder tree with full path, size, last opened, modified and created dates. Filter, sort, and double-click to open.
 - **Settings (⌘, or the gear button at the top right):** appearance (System, Light or Dark), whether files open in a new tab or a new window, default zoom, freezing the first row on open, and automatic updates.
@@ -50,8 +52,8 @@ Requires macOS 12 or later. Runs on both Apple Silicon and Intel Macs.
 
 ### Limitations
 
-- Excel formatting is shown but not saved. Saving writes your data, formulas, comments and macros, without the formatting, and MiniSheet asks before it does so.
-- Row heights, wrapped text, conditional formatting and charts aren't shown.
+- Theme colours are saved as their exact RGB values, so they look the same but don't follow a later change of the workbook's theme.
+- Row heights, wrapped text, conditional formatting, charts and images aren't shown, and they aren't kept when the file is saved.
 - `.xls` files can be opened, but they're saved as `.xlsx`.
 
 ## Build it yourself
